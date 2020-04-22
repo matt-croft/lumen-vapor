@@ -1,0 +1,11 @@
+/vendor
+/.idea
+Homestead.json
+Homestead.yaml
+.env
+.phpunit.result.cache
+.vapor/
+.env.production
+.env.staging
+vapor.yml
+storage/
