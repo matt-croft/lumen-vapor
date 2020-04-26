@@ -209,7 +209,10 @@ $app->router->group(['namespace' => 'LumenVapor\Handlers'], function () use ($ap
 
         $app->router->{$handler['method']}(
             $handler['path'],
-            $class . '@' . $action
+            [
+                'uses' => $class . '@' . $action,
+                'as' => $name,
+            ]
         );
     });
 });
