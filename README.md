@@ -2,7 +2,7 @@
 
 ## What is this project?
 
-This is a fun experiment to see if Lumen can be fun on Laravel Vapor, the aim is just to get it working at a bare minimum with further intent to improve it if it proves worthwhile.
+This is a fun experiment to see if Lumen can be run on Laravel Vapor, the aim is just to get it working at a bare minimum with further intent to improve it if it proves worthwhile.
 
 I would suggest you do not run this code in any form of production environment or for production application's.
 
