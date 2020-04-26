@@ -6,8 +6,9 @@ date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
 use Laravel\Lumen\Routing\Router;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
-class Handler extends \Laravel\Lumen\Exceptions\Handler
+class ExceptionHandler extends \Laravel\Lumen\Exceptions\Handler
 {
     protected $dontReport = [
         \Illuminate\Auth\Access\AuthorizationException::class,
@@ -136,6 +137,17 @@ class LumenKernel
     }
 }
 
+class Handler
+{
+
+    protected $app;
+
+    public function bootstrap(LumenApplicationExtended $app)
+    {
+        $this->app = $app;
+    }
+}
+
 $app = new LumenApplicationExtended(
     realpath(__DIR__ . '/../')
 );
@@ -145,7 +157,7 @@ $app->withFacades();
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
-    Handler::class
+    ExceptionHandler::class
 );
 
 $app->singleton(
@@ -194,21 +206,35 @@ $app->make(Illuminate\Contracts\Console\Kernel::class)->getConsole()->add(
 
 $app->register(VaporServiceProviderExtended::class);
 
-$app->router->group([
-    'namespace' => 'App\Http\Controllers',
-], function ($router) {
-    $files = (new \Symfony\Component\Finder\Finder())
-        ->files()
-        ->name('*.php')
-        ->in(realpath(__DIR__ . '/../handlers'));
+// $app->router->group([
+//     'namespace' => 'Handlers',
+// ], function ($router) {
+//     $files = (new \Symfony\Component\Finder\Finder())
+//         ->files()
+//         ->name('*.php')
+//         ->in(realpath(__DIR__ . '/../handlers'));
 
-    foreach ($files as $file) {
-        require $file;
-    }
-});
+//     foreach ($files as $file) {
+//     }
+// });
 
 $app->bind(\Illuminate\Contracts\Http\Kernel::class, function ($app) {
     return new LumenKernel($app);
+});
+
+$app->router->group(['namespace' => 'LumenVapor\Handlers'], function () use ($app) {
+    $yaml = Yaml::parseFile(
+        realpath(__DIR__ . '/../lumen-vapor.yml')
+    );
+
+    collect($yaml['handlers'])->each(function ($handler, $name) use ($app) {
+        [$class, $action] = explode('.', $handler['handler']);
+
+        $app->router->{$handler['method']}(
+            $handler['path'],
+            $class . '@' . $action
+        );
+    });
 });
 
 return $app;

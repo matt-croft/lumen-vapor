@@ -1,0 +1,5 @@
+handlers:
+    get-version: # Route Name
+        handler: GetVersion.handle # className.methodToCall
+        path: / # Url
+        method: get # Method
