@@ -137,17 +137,6 @@ class LumenKernel
     }
 }
 
-class Handler
-{
-
-    protected $app;
-
-    public function bootstrap(LumenApplicationExtended $app)
-    {
-        $this->app = $app;
-    }
-}
-
 $app = new LumenApplicationExtended(
     realpath(__DIR__ . '/../')
 );
@@ -205,18 +194,6 @@ $app->make(Illuminate\Contracts\Console\Kernel::class)->getConsole()->add(
 // ]);
 
 $app->register(VaporServiceProviderExtended::class);
-
-// $app->router->group([
-//     'namespace' => 'Handlers',
-// ], function ($router) {
-//     $files = (new \Symfony\Component\Finder\Finder())
-//         ->files()
-//         ->name('*.php')
-//         ->in(realpath(__DIR__ . '/../handlers'));
-
-//     foreach ($files as $file) {
-//     }
-// });
 
 $app->bind(\Illuminate\Contracts\Http\Kernel::class, function ($app) {
     return new LumenKernel($app);
